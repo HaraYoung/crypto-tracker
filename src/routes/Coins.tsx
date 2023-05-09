@@ -1,9 +1,10 @@
-import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useQuery } from "react-query";
 
 import Spinner from "../component/Spinner";
 import { theme } from "../Themes";
+import { fetchCoins } from "../api";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -19,6 +20,7 @@ const Header = styled.header`
 `;
 
 const Title = styled.h1`
+  font-weight: bolder;
   font-size: 48px;
   color: ${(props) => props.theme.accentColor};
 `;
@@ -26,18 +28,26 @@ const Title = styled.h1`
 const CoinsList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.darkColor};
+  box-shadow: ${(props) => props.theme.boxShadow};
   margin-bottom: 10px;
   border-radius: 15px;
   a {
+    border-radius: 15px;
     padding: 20px;
     transition: color 0.2s ease-in;
     display: flex;
     align-items: center;
     &:hover {
       color: ${(props) => props.theme.accentColor};
+      box-shadow: ${(props) => props.theme.hoverBoxShadow};
     }
+  }
+  span {
+    color: white;
+    font-size: 18px;
+    font-weight: 800;
+    margin-left: 0.2em;
   }
 `;
 
@@ -47,7 +57,7 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
-interface CoinInterface {
+interface ICoins {
   id: string;
   name: string;
   symbol: string;
@@ -58,39 +68,29 @@ interface CoinInterface {
 }
 
 const Coins = () => {
-  const [coinArr, setCoinArr] = React.useState<CoinInterface[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  React.useEffect(() => {
-    (async () => {
-      const res = await fetch("https://api.coinpaprika.com/v1/coins");
-      const json = await res.json();
-      setCoinArr(json.slice(0, 100));
-      setLoading(false);
-    })();
-  }, []);
-
+  const { isLoading, data } = useQuery<ICoins[]>(["allCoin"], fetchCoins);
   return (
     <Container>
-      {loading ? (
-          <Spinner
-            visible={true}
-            color={theme.accentColor}
-            width={300}
-            height={300}
-          />
+      {isLoading ? (
+        <Spinner
+          visible={true}
+          color={theme.accentColor}
+          width={300}
+          height={300}
+        />
       ) : (
         <>
           <Header>
             <Title>Coin</Title>
           </Header>
           <CoinsList>
-            {coinArr.map((coin) => (
+            {data?.slice(0, 100).map((coin) => (
               <Coin key={coin.id}>
                 <Link to={`/${coin.id}`} state={coin}>
                   <Img
                     src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
                   />
-                  {coin.name} &rarr;
+                  <span>{coin.name}</span>
                 </Link>
               </Coin>
             ))}

@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import Reset from "styled-reset";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { theme } from "./Themes";
+import { QueryClient, QueryClientProvider } from "react-query";
 
 import App from "./App";
 
@@ -24,14 +25,18 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+const queryClient = new QueryClient();
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <ThemeProvider theme={theme}>
-    <BrowserRouter>
-      <GlobalStyle />
-      <App />
-    </BrowserRouter>
-  </ThemeProvider>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <GlobalStyle />
+        <App />
+      </BrowserRouter>
+    </ThemeProvider>
+  </QueryClientProvider>
 );

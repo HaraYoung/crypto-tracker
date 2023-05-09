@@ -1,4 +1,3 @@
-import React from "react";
 import {
   useLocation,
   useParams,
@@ -6,9 +5,14 @@ import {
   Outlet,
   useMatch,
 } from "react-router-dom";
+import { useQuery } from "react-query";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { theme } from "../Themes";
+
+import Spinner from "../component/Spinner";
+import { fetchCoinInfo, fetchCoinPrice } from "../api";
 
 const Container = styled.div`
   padding: 0 20px;
@@ -17,10 +21,13 @@ const Container = styled.div`
 `;
 
 const Header = styled.header`
-  padding: 2em 0;
+  padding: 5em  0 2em 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  svg:hover {
+    color: ${(props) => props.theme.accentColor};
+  }
 `;
 const Title = styled.h1`
   font-size: 48px;
@@ -39,6 +46,8 @@ const InfoBox = styled.div<{ width: string }>`
   width: ${(props) => props.width};
   background-color: ${(props) => props.theme.darkColor};
   border-radius: 15px;
+  box-shadow: ${(props) => props.theme.boxShadow};
+
   div {
     padding: 0.8em 1em;
     display: flex;
@@ -153,85 +162,92 @@ const Coin = () => {
   const { coinId } = useParams() as RouterParams;
   const { state } = useLocation() as RouterState;
 
-  const [info, setInfo] = React.useState<IInfoData>();
-  const [price, setPrice] = React.useState<IPriceData>();
+  const { isLoading: infoLoading, data: info } = useQuery<IInfoData>(
+    ["info", coinId],
+    () => fetchCoinInfo(`${coinId}`)
+  );
+  const { isLoading: priceLoading, data: price } = useQuery<IPriceData>(
+    ["price", coinId],
+    () => fetchCoinPrice(`${coinId}`)
+  );
 
+  const loading = infoLoading || priceLoading;
   const chartMatch = useMatch("/:coinId/chart");
   const priceMatch = useMatch("/:coinId/price");
 
-  React.useEffect(() => {
-    (async () => {
-      const infoData = await (
-        await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-      ).json();
-      //await (response.json())와 같다
-      const priceData = await (
-        await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-      ).json();
-      setInfo(infoData);
-      setPrice(priceData);
-    })();
-  }, [coinId]);
   return (
     <Container>
       <>
         <Header>
-            <Link to="/">
-              <FontAwesomeIcon
-                icon={faCircleChevronLeft}
-                size="3x"
-                color="white"
-              />
-            </Link>
-            <Title>{state?.name || "Loading..."}</Title>
+          <Link to="/">
+            <FontAwesomeIcon
+              icon={faCircleChevronLeft}
+              size="3x"
+              color="white"
+            />
+          </Link>
+          <Title>{state?.name || info?.name}</Title>
         </Header>
-        <InfoContainer>
-          <InfoBox width={"48%"}>
-            <div>
-              <span>RAKE</span>
-              <span>{info?.rank}</span>
-            </div>
-            <div>
-              <span>SYMBOL</span>
-              <span>{info?.symbol}</span>
-            </div>
-            <div>
-              <span>PRICE</span>
-              <span>{price?.quotes.USD.price.toFixed(3)}</span>
-            </div>
-          </InfoBox>
-          <InfoBox width={"48%"}>
-            <div style={{ marginTop: "0.5em" }}>
-              <span>TOTAL SUPLY</span>
-              <span>{price?.total_supply.toString().slice(0, 8)}</span>
-            </div>
-            <div>
-              <span>MAX SUPLY</span>
-              <span>{price?.max_supply}</span>
-            </div>
-          </InfoBox>
-        </InfoContainer>
-        <InfoBox width={"100%"}>
-          <p>Description</p>
-          <p>{info?.description}</p>
-        </InfoBox>
-        <div style={{ margin: "2.5em 0" }}>
-          <TabBtn
-            to={`/${coinId}/chart`}
-            isactive={chartMatch !== null ? "true" : "false"}
-          >
-            Chart
-          </TabBtn>
-          <TabBtn
-            to={`/${coinId}/price`}
-            isactive={priceMatch !== null ? "true" : "false"}
-          >
-            Price
-          </TabBtn>
-        </div>
-        <div>
-          <Outlet />
-        </div>
+        <>
+          {loading ? (
+            <Spinner
+              visible={true}
+              color={theme.accentColor}
+              width={300}
+              height={300}
+            />
+          ) : (
+            <>
+              <InfoContainer>
+                <InfoBox width={"48%"}>
+                  <div>
+                    <span>RAKE</span>
+                    <span>{info?.rank}</span>
+                  </div>
+                  <div>
+                    <span>SYMBOL</span>
+                    <span>{info?.symbol}</span>
+                  </div>
+                  <div>
+                    <span>PRICE</span>
+                    <span>{price?.quotes.USD.price.toFixed(3)}</span>
+                  </div>
+                </InfoBox>
+                <InfoBox width={"48%"}>
+                  <div style={{ marginTop: "0.5em" }}>
+                    <span>TOTAL SUPLY</span>
+                    <span>{price?.total_supply.toString().slice(0, 8)}</span>
+                  </div>
+                  <div>
+                    <span>MAX SUPLY</span>
+                    <span>{price?.max_supply}</span>
+                  </div>
+                </InfoBox>
+              </InfoContainer>
+              <InfoBox width={"100%"}>
+                <p>Description</p>
+                <p>{info?.description}</p>
+              </InfoBox>
+              <div style={{ margin: "2.5em 0" }}>
+                <TabBtn
+                  to={`/${coinId}/chart`}
+                  isactive={chartMatch !== null ? "true" : "false"}
+                >
+                  Chart
+                </TabBtn>
+                <TabBtn
+                  to={`/${coinId}/price`}
+                  isactive={priceMatch !== null ? "true" : "false"}
+                >
+                  Price
+                </TabBtn>
+              </div>
+              <div style={{padding:'1em 0'}}>
+                <Outlet context={{coinId: coinId, priceData: price?.quotes.USD}}/>
+              </div>
+            </>
+          )}
+        </>
       </>
     </Container>
   );

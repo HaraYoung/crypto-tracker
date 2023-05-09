@@ -6,5 +6,7 @@ declare module "styled-components" {
     darkColor: string,
     textColor: string,
     accentColor: string,
+    boxShadow: string,
+    hoverBoxShadow :string
   }
 }
