@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useQuery } from "react-query";
 
 import Spinner from "../component/Spinner";
-import { theme } from "../Themes";
+import { darkTheme } from "../Themes";
 import { fetchCoins } from "../api";
 
 const Container = styled.div`
@@ -28,7 +28,7 @@ const Title = styled.h1`
 const CoinsList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: ${(props) => props.theme.darkColor};
+  background-color: ${(props) => props.theme.boxColor};
   box-shadow: ${(props) => props.theme.boxShadow};
   margin-bottom: 10px;
   border-radius: 15px;
@@ -44,7 +44,7 @@ const Coin = styled.li`
     }
   }
   span {
-    color: white;
+    color: ${(props) => props.theme.textColor};
     font-size: 18px;
     font-weight: 800;
     margin-left: 0.2em;
@@ -74,7 +74,7 @@ const Coins = () => {
       {isLoading ? (
         <Spinner
           visible={true}
-          color={theme.accentColor}
+          color={darkTheme.accentColor}
           width={300}
           height={300}
         />

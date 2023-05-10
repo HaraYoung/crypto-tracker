@@ -9,7 +9,7 @@ import { useQuery } from "react-query";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { theme } from "../Themes";
+import { darkTheme, lightTheme } from "../Themes";
 
 import Spinner from "../component/Spinner";
 import { fetchCoinInfo, fetchCoinPrice } from "../api";
@@ -21,12 +21,15 @@ const Container = styled.div`
 `;
 
 const Header = styled.header`
-  padding: 5em  0 2em 0;
+  padding: 5em 0 2em 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  svg:hover {
-    color: ${(props) => props.theme.accentColor};
+  svg {
+    color: ${(props)=> props.theme.textColor};
+    &:hover {
+      color: ${(props) => props.theme.accentColor};
+    }
   }
 `;
 const Title = styled.h1`
@@ -44,7 +47,7 @@ const InfoContainer = styled.div`
 const InfoBox = styled.div<{ width: string }>`
   margin: 1em 0;
   width: ${(props) => props.width};
-  background-color: ${(props) => props.theme.darkColor};
+  background-color: ${(props) => props.theme.boxColor};
   border-radius: 15px;
   box-shadow: ${(props) => props.theme.boxShadow};
 
@@ -54,6 +57,7 @@ const InfoBox = styled.div<{ width: string }>`
     align-items: center;
     span {
       padding-left: 0.5em;
+      color: ${(props) => props.theme.textColor};
       &:nth-child(odd) {
         width: 65px;
         font-size: small;
@@ -79,9 +83,7 @@ const InfoBox = styled.div<{ width: string }>`
 `;
 const TabBtn = styled(Link)<{ isactive: string }>`
   background-color: ${(props) =>
-    props.isactive === "true"
-      ? props.theme.accentColor
-      : props.theme.darkColor};
+    props.isactive === "true" ? props.theme.accentColor : props.theme.boxColor};
   padding: 1em 4.9em;
   color: ${(props) => props.theme.textColor};
   font-size: 18px;
@@ -180,11 +182,7 @@ const Coin = () => {
       <>
         <Header>
           <Link to="/">
-            <FontAwesomeIcon
-              icon={faCircleChevronLeft}
-              size="3x"
-              color="white"
-            />
+            <FontAwesomeIcon icon={faCircleChevronLeft} size="3x" />
           </Link>
           <Title>{state?.name || info?.name}</Title>
         </Header>
@@ -192,7 +190,7 @@ const Coin = () => {
           {loading ? (
             <Spinner
               visible={true}
-              color={theme.accentColor}
+              color={darkTheme.accentColor}
               width={300}
               height={300}
             />
@@ -242,8 +240,10 @@ const Coin = () => {
                   Price
                 </TabBtn>
               </div>
-              <div style={{padding:'1em 0'}}>
-                <Outlet context={{coinId: coinId, priceData: price?.quotes.USD}}/>
+              <div style={{ padding: "1em 0" }}>
+                <Outlet
+                  context={{ coinId: coinId, priceData: price?.quotes.USD }}
+                />
               </div>
             </>
           )}

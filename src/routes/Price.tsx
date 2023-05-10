@@ -7,14 +7,14 @@ import { faArrowTrendDown } from "@fortawesome/free-solid-svg-icons";
 const PriceBox = styled.div<{ width: string }>`
   margin: 1em 0.5em;
   width: ${(props) => props.width};
-  background-color: ${(props) => props.theme.darkColor};
+  background-color: ${(props) => props.theme.boxColor};
   border-radius: 15px;
   padding: 1em;
   box-shadow: ${(props) => props.theme.boxShadow};
   p {
     &:first-child {
       font-size: 14px;
-      color: gainsboro;
+      color: ${(props) => props.theme.boxTextColor};
     }
     &:last-child {
       padding: 0.5em 0;
