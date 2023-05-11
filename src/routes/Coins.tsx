@@ -77,6 +77,7 @@ const Coins = () => {
           color={darkTheme.accentColor}
           width={300}
           height={300}
+          layerHeight = '100%'
         />
       ) : (
         <>

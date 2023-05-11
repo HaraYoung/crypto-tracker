@@ -8,10 +8,11 @@ interface ISpinnerProps {
   color?: string;
   width?: number;
   height?: number;
+  layerHeight?: string;
 }
 
 //로딩바 뒤에 표시될 불투명 화면
-const TransLayer = styled.div`
+const TransLayer = styled.div<{height:string}>`
   position: fixed;
   left: 0;
   right: 0;
@@ -19,19 +20,20 @@ const TransLayer = styled.div`
   background-color: gainsboro;
   opacity: 0.5;
   width: 100%;
-  height: 100%;
+  height: ${(props)=> props.height};
 `;
 const Spinner = ({
   visible = false,
   color = "red",
   width = 100,
   height = 100,
+  layerHeight = '100%'
 }: ISpinnerProps) => {
   return (
     <div>
       {visible && (
         //visible이 true일 경우만 노출
-        <TransLayer>
+        <TransLayer height={layerHeight}>
           <Rings
             color={color}
             height={height}

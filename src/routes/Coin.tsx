@@ -9,34 +9,33 @@ import { useQuery } from "react-query";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { darkTheme, lightTheme } from "../Themes";
+import { darkTheme } from "../Themes";
 
 import Spinner from "../component/Spinner";
 import { fetchCoinInfo, fetchCoinPrice } from "../api";
+import ErrorView from "../component/ErrorView";
 
 const Container = styled.div`
   padding: 0 20px;
   max-width: 480px;
   margin: 0 auto;
 `;
-
 const Header = styled.header`
   padding: 5em 0 2em 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   svg {
-    color: ${(props)=> props.theme.textColor};
+    color: ${(props) => props.theme.textColor};
     &:hover {
       color: ${(props) => props.theme.accentColor};
     }
   }
 `;
 const Title = styled.h1`
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   color: ${(props) => props.theme.accentColor};
-  padding: 0 0.5em;
 `;
 
 const InfoContainer = styled.div`
@@ -164,16 +163,23 @@ const Coin = () => {
   const { coinId } = useParams() as RouterParams;
   const { state } = useLocation() as RouterState;
 
-  const { isLoading: infoLoading, data: info } = useQuery<IInfoData>(
-    ["info", coinId],
-    () => fetchCoinInfo(`${coinId}`)
-  );
-  const { isLoading: priceLoading, data: price } = useQuery<IPriceData>(
-    ["price", coinId],
-    () => fetchCoinPrice(`${coinId}`)
+  const {
+    isLoading: infoLoading,
+    data: info,
+    isError: isErrorInfo,
+    error: errorInfo,
+  } = useQuery<IInfoData>(["info", coinId], () => fetchCoinInfo(`${coinId}`));
+  const {
+    isLoading: priceLoading,
+    data: price,
+    isError: isErrorPrice,
+    error: errorPrice,
+  } = useQuery<IPriceData>(["price", coinId], () =>
+    fetchCoinPrice(`${coinId}`)
   );
 
   const loading = infoLoading || priceLoading;
+  const errorData = isErrorInfo || isErrorPrice;
   const chartMatch = useMatch("/:coinId/chart");
   const priceMatch = useMatch("/:coinId/price");
 
@@ -193,6 +199,13 @@ const Coin = () => {
               color={darkTheme.accentColor}
               width={300}
               height={300}
+              layerHeight="100%"
+            />
+          ) : errorData ? (
+            <ErrorView
+              errorMsg={
+                (errorInfo as Error)?.message || (errorPrice as Error)?.message
+              }
             />
           ) : (
             <>
@@ -240,7 +253,7 @@ const Coin = () => {
                   Price
                 </TabBtn>
               </div>
-              <div style={{ padding: "1em 0" }}>
+              <div>
                 <Outlet
                   context={{ coinId: coinId, priceData: price?.quotes.USD }}
                 />

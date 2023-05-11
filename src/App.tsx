@@ -1,6 +1,5 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import { ReactQueryDevtools } from "react-query/devtools";
 import Reset from "styled-reset";
 import styled from "styled-components";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
@@ -12,7 +11,7 @@ import Coins from "./routes/Coins";
 import Coin from "./routes/Coin";
 import Chart from "./routes/Chart";
 import Price from "./routes/Price";
-import NotFound from "./routes/NotFound";
+import NotFound from "./component/NotFound";
 
 const GlobalStyle = createGlobalStyle` 
   ${Reset}
@@ -58,7 +57,6 @@ function App() {
   return (
     <div>
       <ThemeProvider theme={darkThemeState ? darkTheme : lightTheme}>
-        <ReactQueryDevtools initialIsOpen={true} />
         <GlobalStyle />
         <ThemeBtn
           onClick={() => onClickThemeBtn()}

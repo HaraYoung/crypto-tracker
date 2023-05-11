@@ -1,7 +1,11 @@
 import { useOutletContext } from "react-router-dom";
 import { useQuery } from "react-query";
 import ApexChart from "react-apexcharts";
+import Spinner from "../component/Spinner";
+
 import { fetchChartPrice } from "../api";
+import { darkTheme } from "../Themes";
+import ErrorView from "../component/ErrorView";
 
 interface ICoinChart {
   close: string;
@@ -18,14 +22,23 @@ const Chart = () => {
   const { coinId } = useOutletContext<{
     coinId: string;
   }>();
-  const { data } = useQuery<ICoinChart[]>(["chartData"], () =>
-    fetchChartPrice(`${coinId}`)
-  );
 
+  const { isLoading, data, isError, error } = useQuery<ICoinChart[]>(
+    ["chartData"],
+    () => fetchChartPrice(`${coinId}`)
+  );
   return (
-    <div style={{ margin: "2em" }}>
-      {data === undefined ? (
-        "sorry"
+    <div>
+      {isLoading ? (
+        <Spinner
+          visible={true}
+          color={darkTheme.accentColor}
+          width={300}
+          height={300}
+          layerHeight="25em"
+        />
+      ) : isError ? (
+        <ErrorView errorMsg = {(error as Error).message}/>
       ) : (
         <>
           <ApexChart
