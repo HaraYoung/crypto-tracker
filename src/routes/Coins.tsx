@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useQuery } from "react-query";
+import { Helmet } from "react-helmet";
 
 import Spinner from "../component/Spinner";
 import { darkTheme } from "../Themes";
@@ -77,12 +78,15 @@ const Coins = () => {
           color={darkTheme.accentColor}
           width={300}
           height={300}
-          layerHeight = '100%'
+          layerHeight="100%"
         />
       ) : (
         <>
           <Header>
-            <Title>Coin</Title>
+            <Helmet>
+              <title>Crypto Tracker</title>
+            </Helmet>
+            <Title>Crypto Tracker</Title>
           </Header>
           <CoinsList>
             {data?.slice(0, 100).map((coin) => (

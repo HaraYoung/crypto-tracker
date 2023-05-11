@@ -1,11 +1,14 @@
 import { useOutletContext } from "react-router-dom";
 import { useQuery } from "react-query";
 import ApexChart from "react-apexcharts";
-import Spinner from "../component/Spinner";
+import { useRecoilValue } from "recoil";
 
 import { fetchChartPrice } from "../api";
 import { darkTheme } from "../Themes";
+import { darkThemeState } from "../atom";
+
 import ErrorView from "../component/ErrorView";
+import Spinner from "../component/Spinner";
 
 interface ICoinChart {
   close: string;
@@ -27,6 +30,8 @@ const Chart = () => {
     ["chartData"],
     () => fetchChartPrice(`${coinId}`)
   );
+  const isDark = useRecoilValue(darkThemeState);
+
   return (
     <div>
       {isLoading ? (
@@ -38,7 +43,7 @@ const Chart = () => {
           layerHeight="25em"
         />
       ) : isError ? (
-        <ErrorView errorMsg = {(error as Error).message}/>
+        <ErrorView errorMsg={(error as Error).message} />
       ) : (
         <>
           <ApexChart
@@ -51,7 +56,7 @@ const Chart = () => {
             ]}
             options={{
               theme: {
-                mode: "dark",
+                mode: isDark ? "dark" : "light",
               },
               chart: {
                 height: 300,
@@ -155,7 +160,7 @@ const Chart = () => {
                 ),
               },
               theme: {
-                mode: "dark",
+                mode:  isDark ? "dark" : "light",
               },
               plotOptions: {
                 candlestick: {

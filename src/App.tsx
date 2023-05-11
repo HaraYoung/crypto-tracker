@@ -6,12 +6,15 @@ import { ThemeProvider, createGlobalStyle } from "styled-components";
 import { darkTheme, lightTheme } from "./Themes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons";
+import { useRecoilValue } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import Coins from "./routes/Coins";
 import Coin from "./routes/Coin";
 import Chart from "./routes/Chart";
 import Price from "./routes/Price";
 import NotFound from "./component/NotFound";
+import { darkThemeState } from "./atom";
 
 const GlobalStyle = createGlobalStyle` 
   ${Reset}
@@ -49,20 +52,17 @@ const ThemeBtn = styled.button<{ darkThemeState: string }>`
 `;
 
 function App() {
-  const [darkThemeState, setDarkThemeState] = React.useState<boolean>(false);
-  const onClickThemeBtn = () => {
-    setDarkThemeState((current) => !current);
-  };
-  console.log(darkThemeState.toString());
+  const isDark = useRecoilValue(darkThemeState);
+  const setIsDark = useSetRecoilState(darkThemeState);
   return (
     <div>
-      <ThemeProvider theme={darkThemeState ? darkTheme : lightTheme}>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
         <ThemeBtn
-          onClick={() => onClickThemeBtn()}
-          darkThemeState={darkThemeState.toString()}
+          onClick={() => setIsDark((curr) => !curr)}
+          darkThemeState={isDark.toString()}
         >
-          <FontAwesomeIcon icon={darkThemeState ? faSun : faMoon} size="2x" />
+          <FontAwesomeIcon icon={isDark ? faSun : faMoon} size="2x" />
         </ThemeBtn>
         <Routes>
           <Route path="/" element={<Coins />} />

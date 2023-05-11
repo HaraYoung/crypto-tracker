@@ -10,6 +10,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { darkTheme } from "../Themes";
+import { Helmet } from "react-helmet";
 
 import Spinner from "../component/Spinner";
 import { fetchCoinInfo, fetchCoinPrice } from "../api";
@@ -174,8 +175,10 @@ const Coin = () => {
     data: price,
     isError: isErrorPrice,
     error: errorPrice,
-  } = useQuery<IPriceData>(["price", coinId], () =>
-    fetchCoinPrice(`${coinId}`)
+  } = useQuery<IPriceData>(
+    ["price", coinId],
+    () => fetchCoinPrice(`${coinId}`),
+    { refetchInterval: 5000 }
   );
 
   const loading = infoLoading || priceLoading;
@@ -186,6 +189,9 @@ const Coin = () => {
   return (
     <Container>
       <>
+        <Helmet>
+          <title>{state?.name || info?.name}</title>
+        </Helmet>
         <Header>
           <Link to="/">
             <FontAwesomeIcon icon={faCircleChevronLeft} size="3x" />
