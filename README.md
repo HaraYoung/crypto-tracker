@@ -1,18 +1,16 @@
 # crypto-tracker
 
 ![img](./src/asset/img/Desktop%20-%201.png)
+
+
+코인의 기본 정보들과 시세 변동을 확인 할 수 있는 APP입니다.
+
 ## 기능
 
-- To Do를 추가, 삭제, 수정할 수 있다.
-- 카테고리를 추가하고 삭제할 수 있다.
+- coinpaprika API를 통해 코인의 정보들을 확인할 수 있다.
+    - 랭크, 심볼, 가격, 총 공급량, 최대 공급량, 설명, 최고가 달성 일시와 가격, 시간 별 가격 변동
+- line chart와 candlestick chart를 사용자에게 보여줄 수 있다.
 - Dark테마와 Lighte테마를 버튼을 통해 변경할 수 있다.
-- To Do List는 list모드와 board모드가 있다.
-- board모드에서는 To Do item을 드래그로 옮길 수 있다.
-- list모드에서 카테고리를 선택하면 카테고리 별 목록을 볼 수 있다.
-- list모드에서는 카테고리를 선택한 상태에서 To Do를 추가하면 선택한 카테고리의 To Do가 생성된다.
-    - ALL 카테고리에서 To Do 추가시 DOING 카테고리로 추가된다.
-- board모드에서는 각 카테고리 별 To Do를 추가 할 수 있게 input이 있다.
-- 작성된 To Do와 카테고리는 로컬 스토리지에 저장된다.
 
 ## 사용한 기술
 
@@ -20,6 +18,6 @@
 - Typescript
 - Recoil
 - styled-components
-- react-hook-form
-- react-beautiful-dnd
-- recoil-persist
+- react-query
+- apexcharts
+- coinpaprika API
